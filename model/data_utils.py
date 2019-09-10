@@ -477,7 +477,7 @@ def get_chunks(seq, tags):
 
     return chunks
 
-def CoNLLdata4classifier(dataset, processing_word=None, processing_tag=None):
+def CoNLLdata4classifier(dataset, processing_word=None, processing_tag=None, context_length=None):
     '''
     transit CoNLLdata into classifier style, (words,tags,masks)
     :param datasets:
@@ -490,11 +490,15 @@ def CoNLLdata4classifier(dataset, processing_word=None, processing_tag=None):
         for ne_type, ne_start, ne_end in chunks:
             tags = processing_tag(ne_type)
             for i, word in enumerate(raw_words):
-                if i<ne_start or i>=ne_end:
-                    masks.append(False)
+                if context_length is not None \
+                        and (i < (ne_start - context_length) or i > (ne_end + context_length)):
+                    pass
                 else:
-                    masks.append(True)
-                words.append(processing_word(word))
+                    if i<ne_start or i>=ne_end:
+                        masks.append(False)
+                    else:
+                        masks.append(True)
+                    words.append(processing_word(word))
             data.append((words, tags, masks))
             words, tags, masks = [], None, []
     return data
