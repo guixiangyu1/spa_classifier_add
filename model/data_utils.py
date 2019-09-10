@@ -536,19 +536,18 @@ def get_chunks_from_tags(tags):
             tok_chunk_class, tok_chunk_type = tok.split('-')
             if chunk_type is None:
                 chunk_type, chunk_start = tok_chunk_type, i
-            elif tok_chunk_class == "B":
-                chunk = (chunk_type, chunk_start, i)
-                chunks.append(chunk)
-                chunk_type, chunk_start = tok_chunk_type, i
-            elif tok_chunk_class == 'I':
-                if tok_chunk_type == chunk_type:
-                    pass
-                else:
+            else:
+                if tok_chunk_class == "B":
                     chunk = (chunk_type, chunk_start, i)
                     chunks.append(chunk)
-                    chunk_type, chunk_start = None, None
-        else:
-            pass
+                    chunk_type, chunk_start = tok_chunk_type, i
+                elif tok_chunk_class == 'I':
+                    if tok_chunk_type == chunk_type:
+                        pass
+                    else:
+                        chunk = (chunk_type, chunk_start, i)
+                        chunks.append(chunk)
+                        chunk_type, chunk_start = None, None
 
     # end condition
     if chunk_type is not None:
