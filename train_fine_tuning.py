@@ -35,11 +35,11 @@ def main():
     # train model
 
     train4cl = CoNLLdata4classifier(train, processing_word=config.processing_word,
-                                    processing_tag=config.processing_tag)
+                                    processing_tag=config.processing_tag, context_length=config.context_length)
     dev4cl = CoNLLdata4classifier(dev, processing_word=config.processing_word,
-                                  processing_tag=config.processing_tag)
+                                  processing_tag=config.processing_tag, context_length=config.context_length)
     test4cl = CoNLLdata4classifier(test, processing_word=config.processing_word,
-                                   processing_tag=config.processing_tag)
+                                   processing_tag=config.processing_tag, context_length=config.context_length)
 
     model.train(train4cl, dev4cl, test4cl)
 
