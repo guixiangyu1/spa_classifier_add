@@ -524,32 +524,27 @@ def get_chunks_from_tags(tags):
     chunks = []
     chunk_type, chunk_start = None, None
     for i, tok in enumerate(tags):
-        # End of a chunk 1
         if tok == 'O':
-            # Add a chunk.
-            if tok_chunk_type is not None:
+            if chunk_type is not None:
                 chunk = (chunk_type, chunk_start, i)
                 chunks.append(chunk)
                 chunk_type, chunk_start = None, None
             else:
                 pass
-
-        # End of a chunk + start of a chunk!
-        elif tok != 'O':
-            tok_chunk_class, tok_chunk_type = tok.split('-')
-            if tok_chunk_class == "B":
-                if tok_chunk_type is not None:
+        else:
+            tok_class, tok_chunk_type = tok.split('-')
+            if tok_class == 'B':
+                if chunk_type is not None:
                     chunk = (chunk_type, chunk_start, i)
                     chunks.append(chunk)
-                chunk_type, chunk_start = tok_chunk_type, i
-            elif tok_chunk_class == 'I':
-                if tok_chunk_type is not None:
-                    if tok_chunk_type == chunk_type:
-                        pass
-                    else:
-                        chunk = (chunk_type, chunk_start, i)
-                        chunks.append(chunk)
-                        chunk_type, chunk_start = None, None
+                chunk_start = i
+                chunk_type = tok_chunk_type
+            else:
+                assert tok_class == 'I'
+                if chunk_type is not None and chunk_type != tok_chunk_type:
+                    chunk = (chunk_type, chunk_start, i)
+                    chunks.append(chunk)
+                    chunk_type, chunk_start = None, None
                 else:
                     pass
 
